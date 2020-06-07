@@ -43,6 +43,11 @@ app.use(cors());
 // Setup routes that will handle the requests
 app.use('/user', userRoutes);
 
+//#FT-01# Verify JWT in all requests
+app.use(auth, function (req, res, next) {
+	next();
+});
+
 // Setup NOT FOUND response
 app.use((req, res, next) => {
 	const error = new Error("Not Found");
