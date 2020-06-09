@@ -5,9 +5,10 @@ var cookieParser = require('cookie-parser');
 var cors = require('cors');
 var morgan = require('morgan');
 var rfs = require('rotating-file-stream');
+var auth = require('./api/middleware/auth');
 
 // Routes
-var userRoutes = require('./api/components/user/routes');
+var authRoutes = require('./api/components/auth/routes');
 
 var app = express();
 
@@ -40,13 +41,13 @@ app.use(cookieParser());
 // Setup CORS
 app.use(cors());
 
-// Setup routes that will handle the requests
-app.use('/user', userRoutes);
-
 //#FT-01# Verify JWT in all requests
 app.use(auth, function (req, res, next) {
 	next();
 });
+
+// Setup routes that will handle the requests
+app.use('/api/auth', authRoutes);
 
 // Setup NOT FOUND response
 app.use((req, res, next) => {
