@@ -9,6 +9,8 @@ var auth = require('./api/middleware/auth');
 
 // Routes
 var authRoutes = require('./api/components/auth/routes');
+var userRoutes = require('./api/components/user/routes');
+var autoRoutes = require('./api/components/automobile/routes');
 
 var app = express();
 
@@ -48,6 +50,8 @@ app.use(auth, function (req, res, next) {
 
 // Setup routes that will handle the requests
 app.use('/api/auth', authRoutes);
+app.use('/api/user', userRoutes);
+app.use('/api/auto', autoRoutes);
 
 // Setup NOT FOUND response
 app.use((req, res, next) => {
