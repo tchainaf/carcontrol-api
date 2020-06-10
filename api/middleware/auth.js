@@ -5,7 +5,8 @@ var config = require('../config');
 function verifyToken(req, res, next) {
 
 	//#FT-01# Don't validate some specific requests
-	if (req.originalUrl === '/api/auth/login' || req.originalUrl === '/api/user/create')
+	if (req.originalUrl === '/api/auth/login' || req.originalUrl === '/api/user/create'
+		|| req.originalUrl === '/api/auto/getTypes' || req.originalUrl.startsWith('/api/auto/getList'))
 		return next();
 
 	//#FT-01# Get token from request headers
