@@ -17,11 +17,11 @@ exports.getTypes = (req, res) => {
 			});
 		}
 
-		//#FT-01# Get all automobiles
+		//#FT-01# Get all types
 		var request = new sql.Request(pool);
 		request.execute('carcontrol.spConsultaTipoAutomovel').then(result => {
 			res.status(200).json({
-				result: result.recordset,
+				items: result.recordset,
 				message: 'Tipos encontrados!'
 			});
 			pool.close();
@@ -53,8 +53,16 @@ exports.getListByType = (req, res) => {
 		var request = new sql.Request(pool);
 		request.input('idtipo', req.params.idtipo);
 		request.execute('carcontrol.spConsultaAutomovel').then(result => {
+			var itemsList = [];
+			result.recordset.forEach(item => {
+				itemsList.push({
+					Automovel_ID: item.Automovel_ID,
+					desc: item.marca + " " + item.modelo + " " + item.ano + " " + item.cor
+				})
+			});
+
 			res.status(200).json({
-				result: result.recordset,
+				items: itemsList,
 				message: 'Automóveis encontrados!'
 			});
 			pool.close();
