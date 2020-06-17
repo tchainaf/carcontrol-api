@@ -22,7 +22,7 @@ exports.login = (req, res) => {
 		//#FT-01# Get user through email
 		var request = new sql.Request(pool);
 		request.input('email', req.body.email);
-		request.execute('carcontrol.spConsultaUser').then(result => {
+		request.execute('carcontrol.spConsultaLogin').then(result => {
 			//#FT-01# Stores user data
 			var user = result.recordset[0];
 			if (user == null) {
