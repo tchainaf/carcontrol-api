@@ -28,7 +28,7 @@ function verifyToken(req, res, next) {
 		}
 
 		//#FT-01# Stores user id in request for later uses
-		req.userId = decoded.id_usuario;
+		req.userId = decoded.id;
 		next();
 	});
 }

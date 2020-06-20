@@ -45,7 +45,8 @@ exports.login = (req, res) => {
 			}
 
 			//#FT-01# Create a token
-			var token = jwt.sign({ user }, config.jwt_key, {
+			var userData = { id: user.Usuario_ID, nome: user.nome };
+			var token = jwt.sign({ userData }, config.jwt_key, {
 				expiresIn: "1h"
 			});
 
