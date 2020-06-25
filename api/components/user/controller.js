@@ -26,7 +26,7 @@ exports.createUser = (req, res) => {
 		request.input('email', req.body.email);
 		request.input('senha', bcrypt.hashSync(req.body.senha, 5)); //#FT-01# Encrypt password
 		request.input('quilometragem', req.body.quilometragem);
-		request.execute('carcontrol.spIncluiOuAlteraUser').then(() => {
+		request.execute('carcontrol.spIncluiOuAlteraUsuario').then(() => {
 			res.status(200).json({
 				message: 'Usuário criado!'
 			});
@@ -57,8 +57,8 @@ exports.readUser = (req, res) => {
 
 		//#FT-02# Get user data
 		var request = new sql.Request(pool);
-		request.input('user_id', req.params.id);
-		request.execute('carcontrol.spConsultaUser').then(result => {
+		request.input('usuario_id', req.params.id);
+		request.execute('carcontrol.spConsultaUsuario').then(result => {
 			if (result.recordset.length == 0) {
 				pool.close();
 				return res.status(404).json({
@@ -97,7 +97,7 @@ exports.updateUser = (req, res) => {
 
 		//#FT-02# Update user data
 		var request = new sql.Request(pool);
-		request.input('user_id', req.body.id_usuario);
+		request.input('usuario_id', req.body.id_usuario);
 		request.input('automovel_id', req.body.id_automovel);
 		request.input('nome', req.body.nome);
 		request.input('sobrenome', req.body.sobrenome);
@@ -105,7 +105,7 @@ exports.updateUser = (req, res) => {
 		request.input('email', req.body.email);
 		request.input('senha', bcrypt.hashSync(req.body.senha, 5)); //#FT-01# Encrypt password
 		request.input('quilometragem', req.body.quilometragem);
-		request.execute('carcontrol.spIncluiOuAlteraUser').then(() => {
+		request.execute('carcontrol.spIncluiOuAlteraUsuario').then(() => {
 			res.status(200).json({
 				message: 'Usuário alterado!'
 			});
@@ -136,8 +136,8 @@ exports.deleteUser = (req, res) => {
 
 		//#FT-02# Delete user data
 		var request = new sql.Request(pool);
-		request.input('user_id', req.params.id);
-		request.execute('carcontrol.spApagaUser').then(() => {
+		request.input('usuario_id', req.params.id);
+		request.execute('carcontrol.spApagaUsuario').then(() => {
 			res.status(200).json({
 				message: 'Usuário removido!'
 			});

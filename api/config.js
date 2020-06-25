@@ -2,8 +2,8 @@ var config = {}
 
 // SQL Connection
 config.sqlConnection = {
-	user: 'api',
-	password: 'c@rc0ntrol',
+	user: 'api_reader',
+	password: '@api_reader',
 	server: 'carcontrol.cjyihpknblow.sa-east-1.rds.amazonaws.com',
 	database: 'carcontrol',
 	port: 1433
