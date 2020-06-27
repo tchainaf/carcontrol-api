@@ -3,6 +3,8 @@ const router = express.Router();
 const controller = require('./controller');
 
 router.get('/getTypes', controller.getTypes);
-router.get('/getList/:idtipo', controller.getListByType);
+router.get('/getList/:id_type', controller.getListByType);
+router.get('/read/:id', controller.getAutomobile);
+router.post('/update', controller.updateAutomobile);
 
 module.exports = router;

@@ -51,8 +51,8 @@ exports.getListByType = (req, res) => {
 
 		//#FT-01# Get all automobiles
 		var request = new sql.Request(pool);
-		request.input('idtipo', req.params.idtipo);
-		request.execute('carcontrol.spConsultaAutomovel').then(result => {
+		request.input('tipo_id', req.params.id_type);
+		request.execute('carcontrol.spConsultaAutomovelporTipo').then(result => {
 			var itemsList = [];
 			result.recordset.forEach(item => {
 				itemsList.push({
@@ -64,6 +64,80 @@ exports.getListByType = (req, res) => {
 			res.status(200).json({
 				items: itemsList,
 				message: 'Automóveis encontrados!'
+			});
+			pool.close();
+		}).catch(err => {
+			console.log(err);
+			pool.close();
+			res.status(500).json({
+				message: 'Erro interno no banco de dados.',
+				details: err.message
+			});
+		});
+	});
+}
+
+exports.getAutomobile = (req, res) => {
+	//#FT-03# Connect to database
+	var pool = new sql.ConnectionPool(context);
+	pool.connect(err => {
+		if (err) {
+			console.log(err);
+			pool.close();
+			return res.status(500).json({
+				message: 'Não foi possível conectar ao banco de dados.',
+				details: err.message
+			});
+		}
+
+		//#FT-03# Get automobile data
+		var request = new sql.Request(pool);
+		request.input('automovel_id', req.params.id);
+		request.execute('carcontrol.spConsultaAutomovel').then(result => {
+			if (result.recordset.length == 0) {
+				pool.close();
+				return res.status(404).json({
+					message: 'Automóvel não encontrado!'
+				});
+			}
+
+			res.status(200).json({
+				auto: result.recordset[0],
+				message: 'Automóvel encontrado!'
+			});
+			pool.close();
+		}).catch(err => {
+			console.log(err);
+			pool.close();
+			res.status(500).json({
+				message: 'Erro interno no banco de dados.',
+				details: err.message
+			});
+		});
+	});
+}
+
+exports.updateAutomobile = (req, res) => {
+	//#FT-03# Connect to database
+	var pool = new sql.ConnectionPool(context);
+	pool.connect(err => {
+		if (err) {
+			console.log(err);
+			pool.close();
+			return res.status(500).json({
+				message: 'Não foi possível conectar ao banco de dados.',
+				details: err.message
+			});
+		}
+
+		//#FT-03# Update automobile from user
+		var request = new sql.Request(pool);
+		request.input('usuario_id', req.userId);
+		request.input('automovel_id', req.body.id_automovel);
+		request.input('quilometragem', req.body.quilometragem);
+		request.execute('carcontrol.spAlteraVeiculoUsuario').then(() => {
+			res.status(200).json({
+				message: 'Automóvel alterado!'
 			});
 			pool.close();
 		}).catch(err => {

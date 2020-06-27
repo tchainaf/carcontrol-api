@@ -57,7 +57,7 @@ exports.readUser = (req, res) => {
 
 		//#FT-02# Get user data
 		var request = new sql.Request(pool);
-		request.input('usuario_id', req.params.id);
+		request.input('usuario_id', req.userId);
 		request.execute('carcontrol.spConsultaUsuario').then(result => {
 			if (result.recordset.length == 0) {
 				pool.close();
@@ -97,7 +97,7 @@ exports.updateUser = (req, res) => {
 
 		//#FT-02# Update user data
 		var request = new sql.Request(pool);
-		request.input('usuario_id', req.body.id_usuario);
+		request.input('usuario_id', req.userId);
 		request.input('automovel_id', req.body.id_automovel);
 		request.input('nome', req.body.nome);
 		request.input('sobrenome', req.body.sobrenome);
@@ -136,7 +136,7 @@ exports.deleteUser = (req, res) => {
 
 		//#FT-02# Delete user data
 		var request = new sql.Request(pool);
-		request.input('usuario_id', req.params.id);
+		request.input('usuario_id', req.userId);
 		request.execute('carcontrol.spApagaUsuario').then(() => {
 			res.status(200).json({
 				message: 'Usuário removido!'
