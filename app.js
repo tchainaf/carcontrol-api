@@ -11,6 +11,7 @@ var auth = require('./api/middleware/auth');
 var authRoutes = require('./api/components/auth/routes');
 var userRoutes = require('./api/components/user/routes');
 var autoRoutes = require('./api/components/automobile/routes');
+var partRoutes = require('./api/components/part/routes');
 
 var app = express();
 
@@ -52,6 +53,7 @@ app.use(auth, function (req, res, next) {
 app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/auto', autoRoutes);
+app.use('/api/part', partRoutes);
 
 // Setup NOT FOUND response
 app.use((req, res, next) => {
