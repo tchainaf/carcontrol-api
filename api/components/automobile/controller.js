@@ -150,3 +150,36 @@ exports.updateAutomobile = (req, res) => {
 		});
 	});
 }
+
+exports.updateKilometers = (req, res) => {
+	//#FT-05# Connect to database
+	var pool = new sql.ConnectionPool(context);
+	pool.connect(err => {
+		if (err) {
+			console.log(err);
+			pool.close();
+			return res.status(500).json({
+				message: 'Não foi possível conectar ao banco de dados.',
+				details: err.message
+			});
+		}
+
+		//#FT-05# Update user's automobile kilometers
+		var request = new sql.Request(pool);
+		request.input('usuario_id', req.userId);
+		request.input('quilometragem', req.body.quilometragem);
+		request.execute('carcontrol.spAtualizaQuilometragem').then(() => {
+			res.status(200).json({
+				message: 'Quilometragem atualizada!'
+			});
+			pool.close();
+		}).catch(err => {
+			console.log(err);
+			pool.close();
+			res.status(500).json({
+				message: 'Erro interno no banco de dados.',
+				details: err.message
+			});
+		});
+	});
+}

@@ -6,5 +6,6 @@ router.get('/getTypes', controller.getTypes);
 router.get('/getList/:id_type', controller.getListByType);
 router.get('/read/:id', controller.getAutomobile);
 router.post('/update', controller.updateAutomobile);
+router.post('/kilometers', controller.updateKilometers);
 
 module.exports = router;
