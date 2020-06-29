@@ -19,7 +19,7 @@ exports.createUser = (req, res) => {
 
 		//#FT-01# Create a new user
 		var request = new sql.Request(pool);
-		request.input('automovel_id', req.body.id_automovel);
+		request.input('automovel_id', req.body.automovel.automovel_id); //#BF-01#
 		request.input('nome', req.body.nome);
 		request.input('sobrenome', req.body.sobrenome);
 		request.input('telefone', req.body.telefone);
@@ -98,7 +98,7 @@ exports.updateUser = (req, res) => {
 		//#FT-02# Update user data
 		var request = new sql.Request(pool);
 		request.input('usuario_id', req.userId);
-		request.input('automovel_id', req.body.id_automovel);
+		request.input('automovel_id', req.body.automovel.automovel_id); //#BF-01#
 		request.input('nome', req.body.nome);
 		request.input('sobrenome', req.body.sobrenome);
 		request.input('telefone', req.body.telefone);

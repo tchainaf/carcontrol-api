@@ -126,7 +126,7 @@ exports.putPart = (req, res) => {
 
 		//#FT-04# Send new part data
 		var request = new sql.Request(pool);
-		request.input('automovel_id', req.body.id_automovel);
+		request.input('automovel_id', req.body.automovel_id);
 		request.input('peca_id', req.body.id_peca);
 		request.input('motivo_id', req.body.id_motivo);
 		request.input('usuario_id', req.idUser);

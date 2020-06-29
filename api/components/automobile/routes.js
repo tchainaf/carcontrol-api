@@ -4,7 +4,7 @@ const controller = require('./controller');
 
 router.get('/getTypes', controller.getTypes);
 router.get('/getList/:id_type', controller.getListByType);
-router.get('/read/:id', controller.getAutomobile);
+router.get('/read', controller.getAutomobile); //#BF-01#
 router.post('/update', controller.updateAutomobile);
 router.post('/kilometers', controller.updateKilometers);
 

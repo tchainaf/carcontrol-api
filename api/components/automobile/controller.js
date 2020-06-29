@@ -92,7 +92,7 @@ exports.getAutomobile = (req, res) => {
 
 		//#FT-03# Get automobile data
 		var request = new sql.Request(pool);
-		request.input('automovel_id', req.params.id);
+		request.input('usuario_id', req.userId); //#BF-01#
 		request.execute('carcontrol.spConsultaAutomovel').then(result => {
 			if (result.recordset.length == 0) {
 				pool.close();
@@ -133,7 +133,7 @@ exports.updateAutomobile = (req, res) => {
 		//#FT-03# Update automobile from user
 		var request = new sql.Request(pool);
 		request.input('usuario_id', req.userId);
-		request.input('automovel_id', req.body.id_automovel);
+		request.input('automovel_id', req.body.automovel_id); //#BF-01#
 		request.input('quilometragem', req.body.quilometragem);
 		request.execute('carcontrol.spAlteraVeiculoUsuario').then(() => {
 			res.status(200).json({
