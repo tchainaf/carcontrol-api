@@ -1,0 +1,193 @@
+﻿CREATE TABLE carcontrol.carcontrol.dm_tipo (
+                dm_tipo_id INT IDENTITY NOT NULL,
+                tipo VARCHAR(30) NOT NULL,
+                data_criacao DATETIME DEFAULT GETDATE() NOT NULL,
+                CONSTRAINT dm_tipo_id PRIMARY KEY (dm_tipo_id)
+)
+
+
+
+
+
+
+CREATE TABLE carcontrol.carcontrol.dm_motivo (
+                dm_motivo_id INT IDENTITY NOT NULL,
+                motivo VARCHAR(100) NOT NULL,
+                data_criacao DATETIME DEFAULT GETDATE() NOT NULL,
+                CONSTRAINT dm_motivo_id PRIMARY KEY (dm_motivo_id)
+)
+
+
+
+
+
+
+
+
+CREATE TABLE carcontrol.carcontrol.dm_automovel (
+                dm_automovel_id INT IDENTITY NOT NULL,
+                automovel_id INT NOT NULL,
+                dm_tipo_id INT NOT NULL,
+                marca VARCHAR(100) NOT NULL,
+                modelo VARCHAR(100) NOT NULL,
+                ano INT NOT NULL,
+                cor VARCHAR(50) NOT NULL,
+                data_criacao DATETIME DEFAULT GETDATE() NOT NULL,
+                CONSTRAINT dm_automovel_id PRIMARY KEY (dm_automovel_id)
+)
+
+
+
+
+
+
+
+
+CREATE TABLE carcontrol.carcontrol.dm_peca (
+                dm_peca_id INT IDENTITY NOT NULL,
+                dm_automovel_id INT NOT NULL,
+                categoria VARCHAR(100) NOT NULL,
+                nome VARCHAR(100) NOT NULL,
+                durabilidade INT NOT NULL,
+                modelo VARCHAR(100) NOT NULL,
+                data_criacao DATETIME DEFAULT GETDATE() NOT NULL,
+                CONSTRAINT dm_peca_id PRIMARY KEY (dm_peca_id)
+)
+
+
+
+
+
+
+
+
+CREATE TABLE carcontrol.carcontrol.dm_usuario (
+                dm_usuario_id INT IDENTITY NOT NULL,
+                id_usuario INT NOT NULL,
+                dm_automovel_id INT NOT NULL,
+                nome VARCHAR(100) NOT NULL,
+                sobrenome VARCHAR(120) NOT NULL,
+                telefone INT NOT NULL,
+                email VARCHAR(30) NOT NULL,
+                senha VARCHAR(60) NOT NULL,
+                quilometragem INT NOT NULL,
+                data_vigencia DATETIME,
+                data_criacao DATETIME DEFAULT GETDATE()  NOT NULL,
+                CONSTRAINT dm_usuario_id PRIMARY KEY (dm_usuario_id)
+)
+
+
+
+
+
+
+CREATE TABLE carcontrol.carcontrol.ft_carcontrol (
+                ft_carcontrol_id INT IDENTITY NOT NULL,
+                dm_automovel_id INT NOT NULL,
+                dm_peca_id INT NOT NULL,
+                dm_motivo_id INT NOT NULL,
+                dm_usuario_id INT NOT NULL,
+                categoria VARCHAR (200) NOT NULL,
+                previsao_troca INT NOT NULL,
+                data_vigencia DATETIME,
+                data_criacao DATETIME DEFAULT GETDATE() NOT NULL,
+                CONSTRAINT ft_carcontrol_id PRIMARY KEY (ft_carcontrol_id)
+)
+
+
+
+
+
+
+
+
+
+
+CREATE TABLE carcontrol.carcontrol.ft_historico_pecas (
+                ft_historico_pecas_id INT IDENTITY NOT NULL,
+                dm_automovel_id INT NOT NULL,
+                dm_peca_id INT NOT NULL,
+                dm_motivo_id INT NOT NULL,
+                dm_usuario_id INT NOT NULL,
+            categoria VARCHAR (200) NOT NULL,
+                previsao_troca INT NOT NULL,
+                data_vigencia DATETIME,
+                data_criacao DATETIME DEFAULT GETDATE() NOT NULL,
+                CONSTRAINT ft_historico_pecas_id PRIMARY KEY (ft_historico_pecas_id)
+)
+
+
+
+
+
+
+
+
+ALTER TABLE carcontrol.carcontrol.dm_automovel ADD CONSTRAINT dm_tipo_dm_automovel_fk
+FOREIGN KEY (dm_tipo_id)
+REFERENCES carcontrol.carcontrol.dm_tipo (dm_tipo_id)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+
+
+ALTER TABLE carcontrol.carcontrol.ft_historico_pecas ADD CONSTRAINT dm_motivo_ft_historico_pecas_fk
+FOREIGN KEY (dm_motivo_id)
+REFERENCES carcontrol.carcontrol.dm_motivo (dm_motivo_id)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+
+
+ALTER TABLE carcontrol.carcontrol.ft_carcontrol ADD CONSTRAINT dm_motivo_ft_carcontrol_fk
+FOREIGN KEY (dm_motivo_id)
+REFERENCES carcontrol.carcontrol.dm_motivo (dm_motivo_id)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+
+
+ALTER TABLE carcontrol.carcontrol.dm_usuario ADD CONSTRAINT dm_automovel_dm_usuario_fk
+FOREIGN KEY (dm_automovel_id)
+REFERENCES carcontrol.carcontrol.dm_automovel (dm_automovel_id)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+
+
+ALTER TABLE carcontrol.carcontrol.dm_peca ADD CONSTRAINT dm_automovel_dm_peca_fk
+FOREIGN KEY (dm_automovel_id)
+REFERENCES carcontrol.carcontrol.dm_automovel (dm_automovel_id)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+
+
+ALTER TABLE carcontrol.carcontrol.ft_carcontrol ADD CONSTRAINT dm_automovel_ft_carcontrol_fk
+FOREIGN KEY (dm_automovel_id)
+REFERENCES carcontrol.carcontrol.dm_automovel (dm_automovel_id)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+
+
+ALTER TABLE carcontrol.carcontrol.ft_historico_pecas ADD CONSTRAINT dm_peca_ft_historico_pecas_fk
+FOREIGN KEY (dm_peca_id)
+REFERENCES carcontrol.carcontrol.dm_peca (dm_peca_id)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+
+
+ALTER TABLE carcontrol.carcontrol.ft_carcontrol ADD CONSTRAINT dm_peca_ft_carcontrol_fk
+FOREIGN KEY (dm_peca_id)
+REFERENCES carcontrol.carcontrol.dm_peca (dm_peca_id)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+
+
+ALTER TABLE carcontrol.carcontrol.ft_historico_pecas ADD CONSTRAINT dm_usuario_ft_historico_pecas_fk
+FOREIGN KEY (dm_usuario_id)
+REFERENCES carcontrol.carcontrol.dm_usuario (dm_usuario_id)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+
+
+ALTER TABLE carcontrol.carcontrol.ft_carcontrol ADD CONSTRAINT dm_usuario_ft_carcontrol_fk
+FOREIGN KEY (dm_usuario_id)
+REFERENCES carcontrol.carcontrol.dm_usuario (dm_usuario_id)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION

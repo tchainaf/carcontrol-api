@@ -1,0 +1,325 @@
+CREATE procedure carcontrol.spAlteraVeiculoUsuario(
+   	 @usuario_id int,
+   	 @automovel_ID int,
+   	 @quilometragem int
+   	   	 
+   	 )
+as
+begin
+
+	
+	Update A
+	Set A.dm_automovel_ID = @automovel_id,A.quilometragem = @quilometragem
+	from carcontrol.carcontrol.dm_usuario A
+	where A.dm_usuario_id = @usuario_ID 
+	
+	end;
+
+
+--Deletar Usuario
+CREATE procedure carcontrol.spApagaUsuario(@usuario_id int)
+as
+begin
+  delete A
+  from carcontrol.carcontrol.dm_usuario A
+  WHERE dm_usuario_id = @usuario_id;
+end;
+
+
+
+
+Create PROCEDURE carcontrol.spAtualizaQuilometragem (@Usuario_ID int , @quilometragem int)
+AS
+BEGIN
+UPDATE  carcontrol.carcontrol.dm_usuario 
+set quilometragem  = @quilometragem
+	FROM carcontrol.carcontrol.dm_usuario du 
+	WHERE dm_usuario_id = @usuario_id
+END;
+
+
+
+
+CREATE PROCEDURE carcontrol.spConsultaAutomovel (@Usuario_ID int)
+AS
+BEGIN
+	select A.dm_automovel_id  as Automovel_ID,
+	C.tipo,B.marca,b.modelo,b.ano,b.cor	
+from carcontrol.carcontrol.dm_usuario A
+Left join carcontrol.carcontrol.dm_automovel B 
+on A.dm_automovel_id = b.dm_automovel_id 
+left join carcontrol.carcontrol.dm_tipo C 
+on C.dm_tipo_id  = B.dm_tipo_id 
+where A.dm_usuario_id  = @usuario_id
+END;
+
+
+--consulta automovel por tipo 
+Create PROCEDURE carcontrol.spConsultaAutomovelporTipo (@Tipo_ID int)
+AS
+BEGIN
+	SELECT dm_automovel_id  as Automovel_ID,
+			marca ,modelo ,ano ,cor 
+	FROM carcontrol.carcontrol.dm_automovel 
+	WHERE dm_tipo_id = @tipo_ID
+END;
+
+
+Create PROCEDURE carcontrol.spConsultaCategoria
+AS
+BEGIN
+    SELECT distinct categoria   		 
+    FROM carcontrol.carcontrol.dm_peca 
+    order by 1
+    
+END;
+
+
+CREATE PROCEDURE carcontrol.spConsultaLogin (@email VARCHAR (50))
+AS
+BEGIN
+	SELECT dm_usuario_id as Usuario_ID
+		,senha,nome 
+	FROM carcontrol.carcontrol.dm_usuario
+	WHERE email = @email
+END;
+
+
+
+CREATE Procedure carcontrol.spConsultaMotivo as 
+begin
+select distinct dm_motivo_id  as Motivo_ID , motivo 
+from  carcontrol.carcontrol.dm_motivo dm 
+where motivo <> 'Peça Nova'
+order by 1
+end;
+
+
+Create PROCEDURE carcontrol.spConsultaPeca (@Peca_ID int)
+AS
+BEGIN
+	SELECT dm_peca_id  as Peca_ID,
+			dm_automovel_id  as Automovel_ID,
+			marca ,modelo ,ano ,cor 
+	FROM carcontrol.carcontrol.dm_peca 
+	WHERE dm_peca_id = @Peca_id
+END;
+
+
+Create PROCEDURE carcontrol.spConsultaPecaDetalhada (@categoria varchar(200), @usuario_id int)
+as
+BEGIN
+ select Convert(nvarchar(30), fc.data_criacao , 103) as Data_Instalacao,dp.nome ,dp.modelo ,dp.durabilidade 
+ from carcontrol.carcontrol.ft_carcontrol fc 
+ left join carcontrol.carcontrol.dm_peca dp 
+ on fc.dm_peca_id  = dp.dm_peca_id 
+ where fc.categoria = @categoria and fc.dm_usuario_id = @usuario_id
+ end ;
+
+
+CREATE PROCEDURE carcontrol.spConsultaPecaporCategoria (@categoria varchar(200),@usuario_id int)
+as
+BEGIN
+
+	select P.dm_peca_id  as Peca_ID,
+       P.nome ,P.modelo ,P.durabilidade 
+from carcontrol.carcontrol.dm_usuario U
+left join carcontrol.carcontrol.dm_peca P
+on U.dm_automovel_id  = P.dm_automovel_id 
+where U.dm_usuario_id = @usuario_id 
+and P.categoria =@categoria
+	
+
+ END;
+
+
+CREATE PROCEDURE carcontrol.spConsultaTipoAutomovel 
+AS
+BEGIN
+	SELECT dm_tipo_id  as Tipo_ID,tipo 
+	FROM carcontrol.carcontrol.dm_tipo 
+	
+END;
+
+
+
+Create PROCEDURE carcontrol.spConsultaUsuario (@usuario_ID int)
+AS
+BEGIN
+    SELECT 
+   		 A.dm_automovel_id as Automovel_ID,
+   		 A.nome,
+   		 A.sobrenome,
+   		 A.telefone,
+   		 A.email,
+   		 A.senha,
+   		 A.quilometragem,
+   		 A.data_vigencia,
+   		 A.data_criacao,
+   		 B.marca,
+   		 B.modelo 
+    FROM carcontrol.carcontrol.dm_usuario A
+    left join carcontrol.carcontrol.dm_automovel B
+    on A.dm_automovel_id  = B.dm_automovel_id 
+    WHERE A.dm_usuario_id = @usuario_ID
+END;
+
+
+
+CREATE procedure carcontrol.spIncluiOuAlteraUsuario(
+   	 @usuario_id int,
+   	 @automovel_ID int,
+   	 @nome varchar(100),
+   	 @sobrenome varchar(120),
+   	 @telefone int,
+   	 @email varchar(30),
+   	 @senha varchar(60),
+   	 @quilometragem int   	 
+   	 )
+as
+begin
+   if (exists(select dm_usuario_id from carcontrol.carcontrol.dm_usuario WHERE dm_usuario_id = @usuario_id))
+   begin
+  	update A
+  	Set A.dm_automovel_id = @Automovel_ID,
+   	   A.nome = @Nome,
+   	   A.sobrenome = @sobrenome,
+   	   A.telefone = @telefone,
+   	   A.email = @email,
+   	   A.senha = @senha,
+   	   A.quilometragem = @quilometragem
+      from carcontrol.carcontrol.dm_usuario A
+      WHERE dm_usuario_id = @usuario_id
+   end
+   else
+   begin  
+ 	insert into  carcontrol.carcontrol.dm_usuario (dm_automovel_id,nome,sobrenome ,telefone,email ,senha ,quilometragem,data_vigencia,data_criacao )  	 
+  	values  (@Automovel_ID,@nome,@sobrenome,@telefone,@email,@senha,@quilometragem,NUll,Getdate())
+   end
+end;
+
+
+
+CREATE procedure carcontrol.spIncluiOuAlteraUsuario(
+   	 @usuario_id int,
+   	 @automovel_ID int,
+   	 @nome varchar(100),
+   	 @sobrenome varchar(120),
+   	 @telefone int,
+   	 @email varchar(30),
+   	 @senha varchar(60),
+   	 @quilometragem int   	 
+   	 )
+as
+begin
+   if (exists(select dm_usuario_id from carcontrol.carcontrol.dm_usuario WHERE dm_usuario_id = @usuario_id))
+   begin
+  	update A
+  	Set A.dm_automovel_id = @Automovel_ID,
+   	   A.nome = @Nome,
+   	   A.sobrenome = @sobrenome,
+   	   A.telefone = @telefone,
+   	   A.email = @email,
+   	   A.senha = @senha,
+   	   A.quilometragem = @quilometragem
+      from carcontrol.carcontrol.dm_usuario A
+      WHERE dm_usuario_id = @usuario_id
+   end
+   else
+   begin  
+ 	insert into  carcontrol.carcontrol.dm_usuario (dm_automovel_id,nome,sobrenome ,telefone,email ,senha ,quilometragem,data_vigencia,data_criacao )  	 
+  	values  (@Automovel_ID,@nome,@sobrenome,@telefone,@email,@senha,@quilometragem,NUll,Getdate())
+   end
+end;
+
+
+
+
+
+CREATE PROCEDURE carcontrol.spInsereAutomovel (
+	@Tipo VARCHAR (20) 
+	,@Marca VARCHAR (100)
+	,@Modelo VARCHAR (100) 
+	,@Ano INT
+	,@Cor VARCHAR (50)
+	)
+AS
+BEGIN
+	DECLARE @idtipo INT
+
+	IF @tipo = 'Carro'
+		SET @idtipo = 1
+	ELSE
+		SET @idtipo = 2
+
+	DECLARE @count INT
+
+	SET @count = (
+			SELECT Count(*)
+			FROM carcontrol.carcontrol.dm_automovel
+			WHERE dm_tipo_id = @idtipo
+				AND marca = @marca
+				AND modelo = @modelo
+				AND ano = @ano
+				AND Cor = @cor
+			)
+
+	IF @count > 1
+		SELECT 'Esse Automóvel já foi Cadastrado'
+	ELSE
+		INSERT INTO carcontrol.carcontrol.dm_automovel (
+			dm_tipo_id
+			,marca
+			,modelo
+			,ano
+			,Cor
+			)
+		SELECT @idtipo
+			,@marca
+			,@modelo
+			,@Ano
+			,@cor
+END;
+
+-- Procedure para saber qual é a peça que tem o menor km e precisa ser trocada
+Create PROCEDURE carcontrol.spProximaTrocaPeca (@usuario_id int)
+as
+BEGIN
+ select MIN(fc.previsao_troca) as menor_km
+ from carcontrol.carcontrol.ft_carcontrol fc 
+ where fc.dm_usuario_id = @usuario_id
+ end ;
+
+-- Procedure para saber quantas peças estão cadastradas no aplicativo
+Create PROCEDURE carcontrol.spQuantPecas (@usuario_id int)
+as
+BEGIN
+ select COUNT(dm_peca_id ) as Qtd_pecas 
+ from carcontrol.carcontrol.ft_carcontrol fc 
+ where fc.dm_usuario_id = @usuario_id
+ end ;
+ 
+-- Procedure para saber os principal motivo de troca 
+
+Create PROCEDURE carcontrol.spPrincipaisMotivos (@usuario_id int)
+as
+BEGIN
+	select TOP 1 COUNT(fc.dm_motivo_id ) , dm.motivo 
+	from carcontrol.carcontrol.ft_carcontrol fc 
+	inner join carcontrol.carcontrol.dm_motivo dm on fc.dm_motivo_id = dm.dm_motivo_id
+ 	where fc.dm_usuario_id = @usuario_id
+ 	group by dm.motivo
+ end ;
+
+
+-- Procedure para saber a categoria mais usada
+
+Create PROCEDURE carcontrol.spPrincipaisCategorias (@usuario_id int)
+as
+BEGIN
+select TOP 1 COUNT(fc.categoria )  , fc.categoria 
+	from carcontrol.carcontrol.ft_carcontrol fc 
+ 	where fc.dm_usuario_id = @usuario_id
+	group by fc.categoria 
+ end ;
+ 
