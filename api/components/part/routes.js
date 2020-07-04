@@ -4,6 +4,7 @@ const controller = require('./controller');
 
 router.get('/getCategories', controller.getCategories);
 router.get('/getList/:category', controller.getListByCategory);
+router.get('/getReasons', controller.getReasons);
 router.get('/read/:category', controller.getPart);
 router.post('/put', controller.putPart);
 

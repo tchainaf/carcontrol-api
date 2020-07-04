@@ -70,6 +70,38 @@ exports.getListByCategory = (req, res) => {
 	});
 }
 
+exports.getReasons = (req, res) => {
+	//#FT-04# Connect to database
+	var pool = new sql.ConnectionPool(context);
+	pool.connect(err => {
+		if (err) {
+			console.log(err);
+			pool.close();
+			return res.status(500).json({
+				message: 'Não foi possível conectar ao banco de dados.',
+				details: err.message
+			});
+		}
+
+		//#FT-04# Get all reasons to change part
+		var request = new sql.Request(pool);
+		request.execute('carcontrol.spConsultaMotivo').then(result => {
+			res.status(200).json({
+				items: result.recordset,
+				message: 'Motivos encontrados!'
+			});
+			pool.close();
+		}).catch(err => {
+			console.log(err);
+			pool.close();
+			res.status(500).json({
+				message: 'Erro interno no banco de dados.',
+				details: err.message
+			});
+		});
+	});
+}
+
 exports.getPart = (req, res) => {
 	//#FT-04# Connect to database
 	var pool = new sql.ConnectionPool(context);
@@ -126,10 +158,10 @@ exports.putPart = (req, res) => {
 
 		//#FT-04# Send new part data
 		var request = new sql.Request(pool);
-		request.input('automovel_id', req.body.automovel_id);
-		request.input('peca_id', req.body.id_peca);
-		request.input('motivo_id', req.body.id_motivo);
-		request.input('usuario_id', req.idUser);
+		request.input('peca_id', req.body.peca_id);
+		request.input('categoria', req.body.categoria);
+		request.input('motivo_id', req.body.motivo_id);
+		request.input('usuario_id', req.userId);
 		request.execute('carcontrol.spIncluiPeca').then(() => {
 			res.status(200).json({
 				message: 'Peça atualizada!'
