@@ -1,11 +1,10 @@
-const bcrypt = require('bcrypt');
 const sql = require('mssql');
 const config = require('../../config');
 
 const context = config.sqlConnection;
 
-exports.createUser = (req, res) => {
-	//#FT-01# Connect to database
+exports.getReason = (req, res) => {
+	//#FT-06# Connect to database
 	var pool = new sql.ConnectionPool(context);
 	pool.connect(err => {
 		if (err) {
@@ -17,59 +16,20 @@ exports.createUser = (req, res) => {
 			});
 		}
 
-		//#FT-01# Create a new user
-		var request = new sql.Request(pool);
-		request.input('usuario_id', null);
-		request.input('automovel_id', req.body.automovel.automovel_id); //#BF-01#
-		request.input('nome', req.body.nome);
-		request.input('sobrenome', req.body.sobrenome);
-		request.input('telefone', req.body.telefone);
-		request.input('email', req.body.email);
-		request.input('senha', bcrypt.hashSync(req.body.senha, 5)); //#FT-01# Encrypt password
-		request.input('quilometragem', req.body.quilometragem);
-		request.execute('carcontrol.spIncluiOuAlteraUsuario').then(() => {
-			res.status(200).json({
-				message: 'Usuário criado!'
-			});
-			pool.close();
-		}).catch(err => {
-			console.log(err);
-			pool.close();
-			res.status(500).json({
-				message: 'Erro interno no banco de dados.',
-				details: err.message
-			});
-		});
-	});
-}
-
-exports.readUser = (req, res) => {
-	//#FT-02# Connect to database
-	var pool = new sql.ConnectionPool(context);
-	pool.connect(err => {
-		if (err) {
-			console.log(err);
-			pool.close();
-			return res.status(500).json({
-				message: 'Não foi possível conectar ao banco de dados.',
-				details: err.message
-			});
-		}
-
-		//#FT-02# Get user data
+		//#FT-06# Get main reason for exchange
 		var request = new sql.Request(pool);
 		request.input('usuario_id', req.userId);
-		request.execute('carcontrol.spConsultaUsuario').then(result => {
+		request.execute('carcontrol.spPrincipaisMotivos').then(result => {
 			if (result.recordset.length == 0) {
 				pool.close();
 				return res.status(404).json({
-					message: 'Usuário não encontrado!'
+					message: 'Informação não encontrada!'
 				});
 			}
 
 			res.status(200).json({
-				user: result.recordset[0],
-				message: 'Usuário encontrado!'
+				item: result.recordset[0],
+				message: 'Informação encontrada!'
 			});
 			pool.close();
 		}).catch(err => {
@@ -83,8 +43,8 @@ exports.readUser = (req, res) => {
 	});
 }
 
-exports.updateUser = (req, res) => {
-	//#FT-02# Connect to database
+exports.getCategory = (req, res) => {
+	//#FT-06# Connect to database
 	var pool = new sql.ConnectionPool(context);
 	pool.connect(err => {
 		if (err) {
@@ -96,19 +56,20 @@ exports.updateUser = (req, res) => {
 			});
 		}
 
-		//#FT-02# Update user data
+		//#FT-06# Get most exchanged category
 		var request = new sql.Request(pool);
 		request.input('usuario_id', req.userId);
-		request.input('automovel_id', req.body.automovel.automovel_id); //#BF-01#
-		request.input('nome', req.body.nome);
-		request.input('sobrenome', req.body.sobrenome);
-		request.input('telefone', req.body.telefone);
-		request.input('email', req.body.email);
-		request.input('senha', bcrypt.hashSync(req.body.senha, 5)); //#FT-01# Encrypt password
-		request.input('quilometragem', req.body.quilometragem);
-		request.execute('carcontrol.spIncluiOuAlteraUsuario').then(() => {
+		request.execute('carcontrol.spPrincipaisCategorias').then(result => {
+			if (result.recordset.length == 0) {
+				pool.close();
+				return res.status(404).json({
+					message: 'Informação não encontrada!'
+				});
+			}
+
 			res.status(200).json({
-				message: 'Usuário alterado!'
+				item: result.recordset[0],
+				message: 'Informação encontrada!'
 			});
 			pool.close();
 		}).catch(err => {
@@ -122,8 +83,8 @@ exports.updateUser = (req, res) => {
 	});
 }
 
-exports.deleteUser = (req, res) => {
-	//#FT-02# Connect to database
+exports.getParts = (req, res) => {
+	//#FT-06# Connect to database
 	var pool = new sql.ConnectionPool(context);
 	pool.connect(err => {
 		if (err) {
@@ -135,12 +96,60 @@ exports.deleteUser = (req, res) => {
 			});
 		}
 
-		//#FT-02# Delete user data
+		//#FT-06# Get number of parts
 		var request = new sql.Request(pool);
 		request.input('usuario_id', req.userId);
-		request.execute('carcontrol.spApagaUsuario').then(() => {
+		request.execute('carcontrol.spQuantPecas').then(result => {
+			if (result.recordset.length == 0) {
+				pool.close();
+				return res.status(404).json({
+					message: 'Informação não encontrada!'
+				});
+			}
+
 			res.status(200).json({
-				message: 'Usuário removido!'
+				item: result.recordset[0],
+				message: 'Informação encontrada!'
+			});
+			pool.close();
+		}).catch(err => {
+			console.log(err);
+			pool.close();
+			res.status(500).json({
+				message: 'Erro interno no banco de dados.',
+				details: err.message
+			});
+		});
+	});
+}
+
+exports.getNextExchange = (req, res) => {
+	//#FT-06# Connect to database
+	var pool = new sql.ConnectionPool(context);
+	pool.connect(err => {
+		if (err) {
+			console.log(err);
+			pool.close();
+			return res.status(500).json({
+				message: 'Não foi possível conectar ao banco de dados.',
+				details: err.message
+			});
+		}
+
+		//#FT-06# Get next parts to be exchanged
+		var request = new sql.Request(pool);
+		request.input('usuario_id', req.userId);
+		request.execute('carcontrol.spProximaTrocaPeca').then(result => {
+			if (result.recordset.length == 0) {
+				pool.close();
+				return res.status(404).json({
+					message: 'Informação não encontrada!'
+				});
+			}
+
+			res.status(200).json({
+				item: result.recordset[0],
+				message: 'Informação encontrada!'
 			});
 			pool.close();
 		}).catch(err => {
